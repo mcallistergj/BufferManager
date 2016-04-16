@@ -2,21 +2,27 @@ import java.util.*;
 
 public class BufHashTbl {
 
-	private ArrayList<LinkedList<Node>> hashTable;
+	private LinkedList<HashNode>[] hashTable;
 	private final int size = 7;
 	
 	public BufHashTbl(){
-		this.hashTable = new ArrayList<LinkedList<Node>>(size);
+		this.hashTable = new LinkedList[size];
+		for(int i = 0; i < size; i++){
+			hashTable[i] = new LinkedList<HashNode>();
+		}
+		
 	}
 	
 	public void insert(int pageNum, int frameNum){
+		int key = (pageNum%size);
+		hashTable[key].addFirst(new HashNode(pageNum, frameNum));
 		
 	}
 	
 	public int lookup(int pageNum){
 		int key = (pageNum % size);
-		LinkedList<Node> toCheck = this.hashTable.get(key);
-		for(Node n : toCheck){
+		LinkedList<HashNode> toCheck = this.hashTable[key];
+		for(HashNode n : toCheck){
 			if(n.getPage() == pageNum)
 				return n.getFrame();
 		}
@@ -24,15 +30,21 @@ public class BufHashTbl {
 		
 	}
 	
-	public void remove(int frameNum, int pageNum){
+	public void remove(int pageNum){
+		int key = (pageNum % size);
+		LinkedList<HashNode> toCheck = this.hashTable[key];
+		for(HashNode n : toCheck){
+			if(n.getPage() == pageNum)
+				toCheck.remove(n);
+		}
 		
 	}
 	
-	public static class Node{
+	class HashNode{
 		private int page;
 		private int frame;
 		
-		public Node(int pNum, int fNum){
+		public HashNode(int pNum, int fNum){
 			this.page = pNum;
 			this.frame = fNum;
 		}
